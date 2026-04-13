@@ -111,6 +111,7 @@ export type Database = {
         Row: {
           author: string | null
           created_at: string
+          description: string | null
           id: string
           source: string | null
           text: string
@@ -119,6 +120,7 @@ export type Database = {
         Insert: {
           author?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           source?: string | null
           text: string
@@ -127,6 +129,7 @@ export type Database = {
         Update: {
           author?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           source?: string | null
           text?: string
