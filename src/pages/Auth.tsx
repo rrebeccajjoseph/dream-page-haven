@@ -32,7 +32,7 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <h1 className="text-5xl font-light tracking-wide mb-2" style={{ fontFamily: 'var(--font-serif)' }}>
+          <h1 className="text-5xl font-light tracking-wide mb-2" style={{ fontFamily: 'var(--font-mono)' }}>
             ✿ Welcome
           </h1>
           <p className="text-muted-foreground italic" style={{ fontFamily: 'var(--font-body)' }}>
