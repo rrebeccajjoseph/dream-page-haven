@@ -1,29 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import roadImg from '@/assets/road.png';
+import chickenImg from '@/assets/chicken.png';
 
 const Splash = () => {
   const navigate = useNavigate();
-  const [phase, setPhase] = useState<'walking' | 'question' | 'answer'>('walking');
-  const [chickenX, setChickenX] = useState(-10);
-
-  // Animate chicken walking across
-  useEffect(() => {
-    if (phase !== 'walking') return;
-    const interval = setInterval(() => {
-      setChickenX((prev) => {
-        if (prev >= 110) {
-          clearInterval(interval);
-          setTimeout(() => setPhase('question'), 400);
-          return prev;
-        }
-        return prev + 0.8;
-      });
-    }, 30);
-    return () => clearInterval(interval);
-  }, [phase]);
+  const [phase, setPhase] = useState<'idle' | 'question' | 'answer'>('idle');
 
   const handleTap = () => {
-    if (phase === 'question') {
+    if (phase === 'idle') {
+      setPhase('question');
+    } else if (phase === 'question') {
       setPhase('answer');
     } else if (phase === 'answer') {
       navigate('/home');
@@ -33,63 +20,64 @@ const Splash = () => {
   return (
     <div
       onClick={handleTap}
-      className="min-h-screen bg-background flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden relative"
+      className="min-h-screen bg-background flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden relative px-6"
     >
-      {/* Road */}
-      <div className="w-full absolute top-1/2 -translate-y-1/2">
-        <div className="h-32 bg-muted/50 border-t border-b border-border relative">
-          {/* Road dashes */}
-          <div className="absolute top-1/2 -translate-y-1/2 w-full flex gap-8 px-4">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <div key={i} className="w-12 h-1 bg-border rounded flex-shrink-0" />
-            ))}
-          </div>
-        </div>
+      {/* Road illustration */}
+      <div className="relative w-full max-w-2xl mx-auto flex flex-col items-center">
+        <img
+          src={roadImg}
+          alt="A whimsical hand-drawn road"
+          className="w-full max-w-lg opacity-80"
+          width={1200}
+          height={800}
+        />
+
+        {/* Chicken sitting on the road */}
+        <img
+          src={chickenImg}
+          alt="A cute hand-drawn chicken"
+          className="w-24 md:w-32 absolute bottom-4 left-1/2 -translate-x-1/2"
+          width={512}
+          height={512}
+        />
       </div>
 
-      {/* Chicken */}
-      {phase === 'walking' && (
-        <div
-          className="absolute text-6xl md:text-8xl transition-none z-10"
-          style={{
-            left: `${chickenX}%`,
-            top: '50%',
-            transform: 'translateY(-80%)',
-          }}
-        >
-          🐔
-        </div>
-      )}
+      {/* Text */}
+      <div className="mt-8 text-center animate-fade-in">
+        {phase === 'idle' && (
+          <p className="text-muted-foreground text-sm italic animate-pulse" style={{ fontFamily: 'var(--font-body)' }}>
+            tap
+          </p>
+        )}
 
-      {/* Question phase */}
-      {phase === 'question' && (
-        <div className="z-10 text-center px-6 animate-fade-in">
-          <p
-            className="text-2xl md:text-4xl font-light tracking-wide leading-relaxed"
-            style={{ fontFamily: 'var(--font-mono)' }}
-          >
-            why did the chicken cross the road?
-          </p>
-          <p className="text-muted-foreground text-sm mt-8 italic animate-pulse" style={{ fontFamily: 'var(--font-body)' }}>
-            tap to find out
-          </p>
-        </div>
-      )}
+        {phase === 'question' && (
+          <>
+            <p
+              className="text-xl md:text-3xl font-light tracking-wide leading-relaxed animate-fade-in"
+              style={{ fontFamily: 'var(--font-mono)' }}
+            >
+              why did the chicken cross the road?
+            </p>
+            <p className="text-muted-foreground text-sm mt-6 italic animate-pulse" style={{ fontFamily: 'var(--font-body)' }}>
+              tap to find out
+            </p>
+          </>
+        )}
 
-      {/* Answer phase */}
-      {phase === 'answer' && (
-        <div className="z-10 text-center px-6 animate-fade-in">
-          <p
-            className="text-2xl md:text-4xl font-light tracking-wide leading-relaxed"
-            style={{ fontFamily: 'var(--font-mono)' }}
-          >
-            to get to rebecca and isha's margin notes
-          </p>
-          <p className="text-muted-foreground text-sm mt-8 italic animate-pulse" style={{ fontFamily: 'var(--font-body)' }}>
-            tap to enter ✿
-          </p>
-        </div>
-      )}
+        {phase === 'answer' && (
+          <>
+            <p
+              className="text-xl md:text-3xl font-light tracking-wide leading-relaxed animate-fade-in"
+              style={{ fontFamily: 'var(--font-mono)' }}
+            >
+              to get to rebecca and isha's margin notes
+            </p>
+            <p className="text-muted-foreground text-sm mt-6 italic animate-pulse" style={{ fontFamily: 'var(--font-body)' }}>
+              tap to enter ✿
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 };
