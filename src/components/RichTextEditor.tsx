@@ -1,8 +1,12 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
-import { Bold, Italic, Heading1, Heading2, Link as LinkIcon, List, Quote } from 'lucide-react';
-import { useCallback } from 'react';
+import Image from '@tiptap/extension-image';
+import { Bold, Italic, Heading1, Heading2, Link as LinkIcon, List, Quote, ImagePlus } from 'lucide-react';
+import { useCallback, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 interface RichTextEditorProps {
   content: string;
@@ -22,6 +26,9 @@ const MenuButton = ({ active, onClick, children, title }: { active?: boolean; on
 );
 
 const RichTextEditor = ({ content, onChange, placeholder }: RichTextEditorProps) => {
+  const { user } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -30,6 +37,9 @@ const RichTextEditor = ({ content, onChange, placeholder }: RichTextEditorProps)
       Link.configure({
         openOnClick: false,
         HTMLAttributes: { class: 'text-blue-500 underline cursor-pointer' },
+      }),
+      Image.configure({
+        HTMLAttributes: { class: 'rounded-lg max-w-full h-auto my-4' },
       }),
     ],
     content,
@@ -56,11 +66,35 @@ const RichTextEditor = ({ content, onChange, placeholder }: RichTextEditorProps)
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   }, [editor]);
 
+  const handleImageUpload = useCallback(async (file: File) => {
+    if (!editor || !user) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be under 5MB');
+      return;
+    }
+
+    const ext = file.name.split('.').pop();
+    const path = `${user.id}/${Date.now()}.${ext}`;
+
+    const { error } = await supabase.storage.from('post-images').upload(path, file);
+    if (error) {
+      toast.error('Failed to upload image');
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from('post-images').getPublicUrl(path);
+    editor.chain().focus().setImage({ src: publicUrl }).run();
+  }, [editor, user]);
+
   if (!editor) return null;
 
   return (
     <div className="border border-border rounded-md overflow-hidden bg-transparent">
-      <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted/30">
+      <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted/30 flex-wrap">
         <MenuButton
           active={editor.isActive('bold')}
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -113,8 +147,25 @@ const RichTextEditor = ({ content, onChange, placeholder }: RichTextEditorProps)
         >
           <LinkIcon size={14} />
         </MenuButton>
+        <MenuButton
+          onClick={() => fileInputRef.current?.click()}
+          title="Insert image"
+        >
+          <ImagePlus size={14} />
+        </MenuButton>
       </div>
       <EditorContent editor={editor} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleImageUpload(file);
+          e.target.value = '';
+        }}
+      />
     </div>
   );
 };
