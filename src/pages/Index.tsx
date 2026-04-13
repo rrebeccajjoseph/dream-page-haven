@@ -360,7 +360,7 @@ const Index = () => {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {posts
               .filter((p) => {
                 if (!searchQuery) return true;
@@ -370,22 +370,28 @@ const Index = () => {
               .map((p) => (
               <Card
                 key={p.id}
-                className="bg-card border-border cursor-pointer hover:shadow-md transition-all rounded-2xl aspect-square flex flex-col relative"
+                className="bg-card border-border cursor-pointer hover:shadow-md transition-all rounded-2xl flex flex-col relative py-4 px-4"
                 onClick={() => navigate(`/post/${p.id}`)}
               >
-                <CardHeader className="pb-1 flex-1 flex flex-col justify-center items-center text-center px-4">
-                  <CardTitle className="text-base font-normal leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
+                <div className="flex flex-col items-end text-right gap-1">
+                  <CardTitle className="text-sm font-normal leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
                     {p.title}
                   </CardTitle>
-                  <p className="text-[10px] text-muted-foreground mt-1.5" style={{ fontFamily: 'var(--font-body)' }}>
+                  <p className="text-[10px] text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>
                     {format(new Date(p.created_at), 'MMMM d, yyyy')}
                   </p>
-                  <p className="text-[10px] italic mt-0.5" style={{ fontFamily: 'var(--font-body)', color: getAuthorColor(p.author) || 'hsl(var(--muted-foreground))' }}>
-                    {p.author}
-                  </p>
-                </CardHeader>
+                  <span className="inline-flex items-center gap-1.5 mt-0.5">
+                    <span
+                      className="w-2 h-2 rounded-full inline-block"
+                      style={{ backgroundColor: getAuthorColor(p.author) || 'hsl(var(--muted-foreground))' }}
+                    />
+                    <span className="text-[10px] text-foreground italic" style={{ fontFamily: 'var(--font-body)' }}>
+                      {p.author}
+                    </span>
+                  </span>
+                </div>
                 {isOwner(p.user_id) && (
-                  <div className="absolute bottom-2 right-2 flex gap-1">
+                  <div className="absolute bottom-2 left-2 flex gap-1">
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete('posts', p.id); }}
                       className="text-muted-foreground/40 hover:text-destructive transition-colors p-1"
