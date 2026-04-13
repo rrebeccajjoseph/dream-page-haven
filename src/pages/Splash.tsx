@@ -25,7 +25,17 @@ const useTypewriter = (text: string, speed = 50, start = false) => {
 
 const Splash = () => {
   const navigate = useNavigate();
-  const [phase, setPhase] = useState<'question' | 'answer'>('question');
+  const [phase, setPhase] = useState<'loading' | 'question' | 'answer'>('loading');
+  const [imagesLoaded, setImagesLoaded] = useState(0);
+
+  const allLoaded = imagesLoaded >= 2;
+
+  useEffect(() => {
+    if (allLoaded) {
+      const timer = setTimeout(() => setPhase('question'), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [allLoaded]);
 
   const question = useTypewriter('why did the chicken cross the road?', 45, phase === 'question');
   const answer = useTypewriter("to get to rebecca and isha's margin notes", 45, phase === 'answer');
@@ -35,14 +45,15 @@ const Splash = () => {
     else if (phase === 'answer' && answer.done) navigate('/home');
   };
 
+  const onImageLoad = () => setImagesLoaded((n) => n + 1);
+
   return (
     <div
       onClick={handleTap}
       className="min-h-screen bg-background flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden relative px-6"
     >
       {/* Text above the drawing */}
-      <div className="mb-6 text-center min-h-[4rem]">
-
+      <div className="mb-2 text-center min-h-[3rem]">
         {phase === 'question' && (
           <>
             <p
@@ -53,7 +64,7 @@ const Splash = () => {
               {!question.done && <span className="animate-pulse">|</span>}
             </p>
             {question.done && (
-              <p className="text-muted-foreground text-xs mt-4 italic animate-pulse animate-fade-in" style={{ fontFamily: 'var(--font-body)' }}>
+              <p className="text-muted-foreground text-xs mt-3 italic animate-pulse animate-fade-in" style={{ fontFamily: 'var(--font-body)' }}>
                 tap to find out
               </p>
             )}
@@ -70,7 +81,7 @@ const Splash = () => {
               {!answer.done && <span className="animate-pulse">|</span>}
             </p>
             {answer.done && (
-              <p className="text-muted-foreground text-xs mt-4 italic animate-pulse animate-fade-in" style={{ fontFamily: 'var(--font-body)' }}>
+              <p className="text-muted-foreground text-xs mt-3 italic animate-pulse animate-fade-in" style={{ fontFamily: 'var(--font-body)' }}>
                 tap to enter ✿
               </p>
             )}
@@ -86,6 +97,7 @@ const Splash = () => {
           className="w-full max-w-lg opacity-80"
           width={1200}
           height={800}
+          onLoad={onImageLoad}
         />
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
           <img
@@ -94,6 +106,7 @@ const Splash = () => {
             className="w-24 md:w-32 hover:animate-wiggle"
             width={512}
             height={512}
+            onLoad={onImageLoad}
           />
         </div>
       </div>
