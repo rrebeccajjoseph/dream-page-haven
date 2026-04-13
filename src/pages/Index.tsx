@@ -197,15 +197,6 @@ const Index = () => {
               ← back to chicken
             </button>
           </div>
-          <img
-            src={eggImg}
-            alt="egg"
-            className="w-10 md:w-14 cursor-pointer opacity-40 hover:opacity-100 hover:scale-110 transition-all"
-            onClick={handleEggClick}
-            title={user ? 'sign out' : 'sign in'}
-            width={512}
-            height={512}
-          />
         </div>
       </header>
 
