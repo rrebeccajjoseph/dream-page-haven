@@ -373,7 +373,7 @@ const Index = () => {
                 className="bg-card border-border cursor-pointer hover:shadow-md transition-all rounded-2xl flex flex-col relative py-4 px-4"
                 onClick={() => navigate(`/post/${p.id}`)}
               >
-                <div className="flex flex-col items-end text-right gap-1">
+                <div className="flex flex-col items-start text-left gap-1">
                   <CardTitle className="text-sm font-normal leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
                     {p.title}
                   </CardTitle>
@@ -391,7 +391,7 @@ const Index = () => {
                   </span>
                 </div>
                 {isOwner(p.user_id) && (
-                  <div className="absolute bottom-2 left-2 flex gap-1">
+                  <div className="absolute bottom-2 right-2 flex gap-1">
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete('posts', p.id); }}
                       className="text-muted-foreground/40 hover:text-destructive transition-colors p-1"
