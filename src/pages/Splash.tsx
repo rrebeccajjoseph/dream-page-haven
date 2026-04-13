@@ -83,7 +83,7 @@ const Splash = () => {
             className="text-2xl md:text-4xl font-light tracking-wide leading-relaxed"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
-            to get to rebecca's margin notes
+            to get to rebecca and isha's margin notes
           </p>
           <p className="text-muted-foreground text-sm mt-8 italic animate-pulse" style={{ fontFamily: 'var(--font-body)' }}>
             tap to enter ✿
