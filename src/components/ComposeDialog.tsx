@@ -195,13 +195,6 @@ const ComposeDialog = ({ onCreated, defaultType }: ComposeDialogProps) => {
                 style={{ fontFamily: 'var(--font-body)' }}
               />
               <Input
-                placeholder="source (optional)"
-                value={source}
-                onChange={(e) => setSource(e.target.value)}
-                className="border-border bg-transparent"
-                style={{ fontFamily: 'var(--font-body)' }}
-              />
-              <Input
                 placeholder="description (optional)"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
