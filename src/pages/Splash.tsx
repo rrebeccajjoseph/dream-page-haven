@@ -26,7 +26,7 @@ const Splash = () => {
     if (phase === 'question') {
       setPhase('answer');
     } else if (phase === 'answer') {
-      navigate('/auth');
+      navigate('/home');
     }
   };
 
