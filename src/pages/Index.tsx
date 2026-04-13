@@ -49,6 +49,7 @@ const tabLabels: Record<Tab, string> = {
 };
 
 const Index = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('essay');
   const [posts, setPosts] = useState<Post[]>([]);
   const [quotes, setQuotes] = useState<Quote[]>([]);
@@ -83,6 +84,13 @@ const Index = () => {
           <p className="text-muted-foreground italic mt-1 text-sm" style={{ fontFamily: 'var(--font-body)' }}>
             essays · poetry · books · quotes · miscellany
           </p>
+          <button
+            onClick={() => navigate('/')}
+            className="text-muted-foreground hover:text-foreground text-xs transition-colors"
+            style={{ fontFamily: 'var(--font-mono)' }}
+          >
+            ← back to chicken
+          </button>
         </div>
       </header>
 
