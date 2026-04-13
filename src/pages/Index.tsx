@@ -7,7 +7,7 @@ import { Search } from 'lucide-react';
 import { format } from 'date-fns';
 
 type Category = 'essay' | 'poetry';
-type Tab = Category | 'quotes' | 'books' | 'appreciation';
+type Tab = Category | 'appreciation';
 
 interface Post {
   id: string;
@@ -42,8 +42,6 @@ interface Book {
 const tabLabels: Record<Tab, string> = {
   essay: 'Essays',
   poetry: 'Poetry',
-  books: 'Books',
-  quotes: 'Quotes',
   appreciation: 'Appreciation',
 };
 
@@ -74,12 +72,6 @@ const Index = () => {
       ]);
       if (quotesRes.data) setQuotes(quotesRes.data);
       if (booksRes.data) setBooks(booksRes.data);
-    } else if (activeTab === 'quotes') {
-      const { data } = await supabase.from('quotes').select('*').order('created_at', { ascending: false });
-      if (data) setQuotes(data);
-    } else if (activeTab === 'books') {
-      const { data } = await supabase.from('books').select('*').order('created_at', { ascending: false });
-      if (data) setBooks(data);
     } else {
       const { data } = await supabase.from('posts').select('*').eq('category', activeTab).order('created_at', { ascending: false });
       if (data) setPosts(data);
