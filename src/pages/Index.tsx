@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import UserIndicator from '@/components/UserIndicator';
 import ComposeDialog from '@/components/ComposeDialog';
 import chickenImg from '@/assets/chicken.png';
+import eggImg from '@/assets/egg.png';
 
 type Category = 'essay' | 'poetry';
 type Tab = Category | 'appreciation';
@@ -171,7 +172,15 @@ const Index = () => {
               ← back to chicken
             </button>
           </div>
-          <UserIndicator />
+          <img
+            src={eggImg}
+            alt="egg"
+            className="w-8 h-8 cursor-pointer opacity-40 hover:opacity-80 hover:animate-wiggle transition-opacity"
+            onClick={() => user ? signOut().then(() => navigate('/')) : navigate('/auth')}
+            title={user ? 'sign out' : 'sign in'}
+            width={512}
+            height={512}
+          />
         </div>
       </header>
 
