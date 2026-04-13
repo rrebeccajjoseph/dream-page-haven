@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import RichTextEditor from '@/components/RichTextEditor';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -150,12 +151,10 @@ const ComposeDialog = ({ onCreated, defaultType }: ComposeDialogProps) => {
                 className="border-border bg-transparent"
                 style={{ fontFamily: 'var(--font-serif)' }}
               />
-              <Textarea
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
                 placeholder={contentType === 'poetry' ? 'write your poem…' : 'write your essay…'}
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="border-border bg-transparent min-h-[200px]"
-                style={{ fontFamily: 'var(--font-body)' }}
               />
             </>
           )}
