@@ -83,7 +83,7 @@ const Index = () => {
       {/* Header */}
       <header className="border-b border-border py-8 px-6">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-light tracking-wider" style={{ fontFamily: 'var(--font-mono)' }}>
+          <h1 className="text-4xl font-light tracking-wider md:text-3xl" style={{ fontFamily: 'var(--font-mono)' }}>
             rebecca and isha's margin notes
           </h1>
           <p className="text-muted-foreground italic mt-1 text-sm" style={{ fontFamily: 'var(--font-body)' }}>
