@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
 import { format } from 'date-fns';
 
 type Category = 'essay' | 'poetry' | 'misc';
@@ -16,6 +12,7 @@ interface Post {
   title: string;
   content: string;
   category: string;
+  author: string;
   published: boolean;
   created_at: string;
   user_id: string;
@@ -50,11 +47,13 @@ const tabLabels: Record<Tab, string> = {
 
 const Index = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<Tab>('essay');
+  const location = useLocation();
+  const initialTab = (location.state as any)?.tab || 'essay';
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
   const [posts, setPosts] = useState<Post[]>([]);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
-  const [expandedPost, setExpandedPost] = useState<string | null>(null);
+  
 
   useEffect(() => {
     fetchData();
@@ -100,7 +99,7 @@ const Index = () => {
           {(Object.keys(tabLabels) as Tab[]).map((tab) => (
             <button
               key={tab}
-              onClick={() => { setActiveTab(tab); setExpandedPost(null); }}
+              onClick={() => setActiveTab(tab)}
               className={`px-5 py-3 text-sm tracking-wider border-b-2 transition-colors ${
                 activeTab === tab
                   ? 'border-foreground text-foreground'
@@ -162,31 +161,24 @@ const Index = () => {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((p) => (
               <Card
                 key={p.id}
-                className="bg-card border-border cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => setExpandedPost(expandedPost === p.id ? null : p.id)}
+                className="bg-card border-border cursor-pointer hover:shadow-md transition-all rounded-2xl aspect-square flex flex-col justify-between"
+                onClick={() => navigate(`/post/${p.id}`)}
               >
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xl font-normal" style={{ fontFamily: 'var(--font-serif)' }}>
+                <CardHeader className="pb-2 flex-1 flex flex-col justify-center items-center text-center">
+                  <CardTitle className="text-xl font-normal leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
                     {p.title}
                   </CardTitle>
-                  <p className="text-xs text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>
+                  <p className="text-xs text-muted-foreground mt-2" style={{ fontFamily: 'var(--font-body)' }}>
                     {format(new Date(p.created_at), 'MMMM d, yyyy')}
                   </p>
+                  <p className="text-xs text-muted-foreground italic mt-1" style={{ fontFamily: 'var(--font-body)' }}>
+                    {p.author}
+                  </p>
                 </CardHeader>
-                <CardContent>
-                  <div
-                    className={`prose-vintage text-sm leading-relaxed whitespace-pre-wrap ${
-                      expandedPost === p.id ? '' : 'line-clamp-4'
-                    }`}
-                    style={{ fontFamily: 'var(--font-body)' }}
-                  >
-                    {p.content}
-                  </div>
-                </CardContent>
               </Card>
             ))}
           </div>

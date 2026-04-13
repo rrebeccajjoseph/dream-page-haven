@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import Splash from "./pages/Splash";
 import Index from "./pages/Index";
+import PostDetail from "./pages/PostDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Splash />} />
             <Route path="/home" element={<Index />} />
+            <Route path="/post/:id" element={<PostDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

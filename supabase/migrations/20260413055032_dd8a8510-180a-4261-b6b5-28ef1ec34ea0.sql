@@ -1,0 +1,1 @@
+ALTER TABLE public.posts ADD COLUMN author TEXT NOT NULL DEFAULT 'rebecca and isha';
