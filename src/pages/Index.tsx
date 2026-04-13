@@ -120,21 +120,34 @@ const Index = () => {
       <div className="max-w-5xl mx-auto px-6 pt-6">
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setShowSearch(!showSearch)}
+            onClick={() => {
+              if (showSearch && !searchQuery) {
+                setShowSearch(false);
+              } else {
+                setShowSearch(true);
+              }
+            }}
             className="text-muted-foreground hover:text-foreground transition-colors p-1"
           >
             <Search size={16} />
           </button>
-          {showSearch && (
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              showSearch ? 'max-w-xs w-64 opacity-100' : 'max-w-0 w-0 opacity-0'
+            }`}
+          >
             <Input
               placeholder="search by title or author…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-xs text-sm border-border bg-transparent"
+              onBlur={() => {
+                if (!searchQuery) setShowSearch(false);
+              }}
+              className="text-sm border-border bg-transparent"
               style={{ fontFamily: 'var(--font-mono)' }}
-              autoFocus
+              autoFocus={showSearch}
             />
-          )}
+          </div>
         </div>
       </div>
 
