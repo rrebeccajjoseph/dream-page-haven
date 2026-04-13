@@ -6,8 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { format } from 'date-fns';
 
-type Category = 'essay' | 'poetry' | 'misc';
-type Tab = Category | 'quotes' | 'books';
+type Category = 'essay' | 'poetry';
+type Tab = Category | 'quotes' | 'books' | 'appreciation';
 
 interface Post {
   id: string;
@@ -44,7 +44,11 @@ const tabLabels: Record<Tab, string> = {
   poetry: 'Poetry',
   books: 'Books',
   quotes: 'Quotes',
-  misc: 'Miscellany',
+  appreciation: 'Appreciation',
+};
+
+const tabDescriptions: Partial<Record<Tab, string>> = {
+  appreciation: 'quotes, books, articles, and other people\'s work that we love',
 };
 
 const Index = () => {
@@ -84,7 +88,7 @@ const Index = () => {
             rebecca and isha's margin notes
           </h1>
           <p className="text-muted-foreground italic mt-1 text-sm" style={{ fontFamily: 'var(--font-body)' }}>
-            essays · poetry · books · quotes · miscellany
+            essays · poetry · appreciation
           </p>
           <button
             onClick={() => navigate('/')}
