@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 interface Post {
   id: string;
@@ -12,6 +16,14 @@ interface Post {
   published: boolean;
   created_at: string;
   user_id: string;
+}
+
+interface Comment {
+  id: string;
+  post_id: string;
+  display_name: string;
+  content: string;
+  created_at: string;
 }
 
 const categoryLabels: Record<string, string> = {
@@ -25,6 +37,10 @@ const PostDetail = () => {
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentName, setCommentName] = useState('');
+  const [commentText, setCommentText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -35,6 +51,38 @@ const PostDetail = () => {
     };
     fetchPost();
   }, [id]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      if (!id) return;
+      const { data } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('post_id', id)
+        .order('created_at', { ascending: true });
+      if (data) setComments(data as Comment[]);
+    };
+    fetchComments();
+  }, [id]);
+
+  const handleSubmitComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim() || !id) return;
+    setSubmitting(true);
+    const { data, error } = await supabase.from('comments').insert({
+      post_id: id,
+      display_name: commentName.trim() || 'anonymous',
+      content: commentText.trim(),
+    }).select().single();
+    setSubmitting(false);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      setComments((prev) => [...prev, data as Comment]);
+      setCommentText('');
+      toast.success('comment added ✿');
+    }
+  };
 
   if (loading) {
     return (
@@ -88,6 +136,61 @@ const PostDetail = () => {
           style={{ fontFamily: 'var(--font-body)' }}
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
+
+        {/* Comments section */}
+        <div className="mt-16 pt-8 border-t border-border">
+          <h2 className="text-sm tracking-wider text-muted-foreground mb-6" style={{ fontFamily: 'var(--font-mono)' }}>
+            margin notes ✿
+          </h2>
+
+          {/* Comment list */}
+          {comments.length > 0 && (
+            <div className="space-y-4 mb-8">
+              {comments.map((c) => (
+                <div key={c.id} className="border-l-2 border-border pl-4 py-1">
+                  <p className="text-sm leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
+                    {c.content}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs italic text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>
+                      — {c.display_name}
+                    </span>
+                    <span className="text-xs text-muted-foreground/50" style={{ fontFamily: 'var(--font-mono)' }}>
+                      {format(new Date(c.created_at), 'MMM d, yyyy')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Comment form */}
+          <form onSubmit={handleSubmitComment} className="space-y-3">
+            <Input
+              placeholder="your name (or leave blank for anonymous)"
+              value={commentName}
+              onChange={(e) => setCommentName(e.target.value)}
+              className="bg-background border-border text-sm"
+              style={{ fontFamily: 'var(--font-mono)' }}
+            />
+            <Textarea
+              placeholder="leave a note…"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              required
+              className="bg-background border-border text-sm min-h-[80px] resize-none"
+              style={{ fontFamily: 'var(--font-body)' }}
+            />
+            <Button
+              type="submit"
+              disabled={submitting || !commentText.trim()}
+              className="text-sm"
+              style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}
+            >
+              {submitting ? 'sending…' : 'leave a note'}
+            </Button>
+          </form>
+        </div>
       </main>
 
       {/* Footer */}
