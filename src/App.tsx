@@ -7,7 +7,6 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Splash from "./pages/Splash";
 import Index from "./pages/Index";
 import PostDetail from "./pages/PostDetail";
-import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,7 +22,7 @@ const App = () => (
             <Route path="/" element={<Splash />} />
             <Route path="/home" element={<Index />} />
             <Route path="/post/:id" element={<PostDetail />} />
-            <Route path="/auth" element={<Auth />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
