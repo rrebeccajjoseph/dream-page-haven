@@ -9,10 +9,7 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import UserIndicator from '@/components/UserIndicator';
 import ComposeDialog from '@/components/ComposeDialog';
-import flower1 from '@/assets/flower1.png';
-import flower2 from '@/assets/flower2.png';
-import flower3 from '@/assets/flower3.png';
-import flower4 from '@/assets/flower4.png';
+import chickenImg from '@/assets/chicken.png';
 
 type Category = 'essay' | 'poetry';
 type Tab = Category | 'appreciation';
@@ -83,23 +80,6 @@ const getAuthorColor = (author: string | null) => {
 
 const ITEMS_PER_PAGE = 4;
 
-const flowerStyle = "fixed pointer-events-none select-none";
-
-const WatercolorFlowers = () => (
-  <>
-    <img src={flower1} alt="" className={`${flowerStyle} top-12 left-2 w-16 opacity-25`} loading="lazy" />
-    <img src={flower2} alt="" className={`${flowerStyle} top-28 left-12 w-10 opacity-20`} style={{ transform: 'rotate(30deg)' }} loading="lazy" />
-    <img src={flower3} alt="" className={`${flowerStyle} top-6 left-24 w-12 opacity-15`} style={{ transform: 'rotate(-20deg)' }} loading="lazy" />
-    <img src={flower1} alt="" className={`${flowerStyle} top-16 right-4 w-14 opacity-20`} style={{ transform: 'rotate(45deg)' }} loading="lazy" />
-    <img src={flower4} alt="" className={`${flowerStyle} top-4 right-28 w-10 opacity-15`} style={{ transform: 'rotate(-15deg)' }} loading="lazy" />
-    <img src={flower2} alt="" className={`${flowerStyle} bottom-16 left-4 w-14 opacity-20`} style={{ transform: 'rotate(60deg)' }} loading="lazy" />
-    <img src={flower3} alt="" className={`${flowerStyle} bottom-6 left-20 w-10 opacity-15`} style={{ transform: 'rotate(-40deg)' }} loading="lazy" />
-    <img src={flower4} alt="" className={`${flowerStyle} bottom-12 right-6 w-14 opacity-20`} style={{ transform: 'rotate(25deg)' }} loading="lazy" />
-    <img src={flower1} alt="" className={`${flowerStyle} bottom-28 right-24 w-10 opacity-15`} style={{ transform: 'rotate(-30deg)' }} loading="lazy" />
-    <img src={flower3} alt="" className={`${flowerStyle} top-1/2 left-1 w-10 opacity-15`} style={{ transform: 'rotate(50deg)' }} loading="lazy" />
-    <img src={flower2} alt="" className={`${flowerStyle} top-1/2 right-2 w-10 opacity-15`} style={{ transform: 'rotate(-50deg)' }} loading="lazy" />
-  </>
-);
 
 const Index = () => {
   const navigate = useNavigate();
@@ -172,11 +152,14 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border py-8 px-6">
-        <div className="max-w-5xl mx-auto flex justify-between items-start">
+        <div className="max-w-5xl mx-auto flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-light tracking-wider md:text-3xl" style={{ fontFamily: 'var(--font-mono)' }}>
-              rebecca and isha's margin notes
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-4xl font-light tracking-wider md:text-3xl" style={{ fontFamily: 'var(--font-mono)' }}>
+                rebecca and isha's margin notes
+              </h1>
+              <img src={chickenImg} alt="chicken" className="w-10 h-10" width={512} height={512} />
+            </div>
             <p className="text-muted-foreground italic mt-1 text-sm" style={{ fontFamily: 'var(--font-body)' }}>
               essays · poetry · appreciation
             </p>
@@ -254,7 +237,7 @@ const Index = () => {
         </div>
       </div>
 
-      <WatercolorFlowers />
+      
 
       {/* Content */}
       <main className="max-w-5xl mx-auto px-6 py-6 relative z-10">
