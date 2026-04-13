@@ -85,7 +85,7 @@ const ITEMS_PER_PAGE = 4;
 const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const initialTab = (location.state as any)?.tab || 'essay';
   const [activeTab, setActiveTab] = useState<Tab>(initialTab);
   const [posts, setPosts] = useState<Post[]>([]);
