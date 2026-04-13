@@ -9,6 +9,10 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import UserIndicator from '@/components/UserIndicator';
 import ComposeDialog from '@/components/ComposeDialog';
+import flower1 from '@/assets/flower1.png';
+import flower2 from '@/assets/flower2.png';
+import flower3 from '@/assets/flower3.png';
+import flower4 from '@/assets/flower4.png';
 
 type Category = 'essay' | 'poetry';
 type Tab = Category | 'appreciation';
