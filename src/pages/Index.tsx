@@ -67,7 +67,14 @@ const Index = () => {
   }, [activeTab]);
 
   const fetchData = async () => {
-    if (activeTab === 'quotes') {
+    if (activeTab === 'appreciation') {
+      const [quotesRes, booksRes] = await Promise.all([
+        supabase.from('quotes').select('*').order('created_at', { ascending: false }),
+        supabase.from('books').select('*').order('created_at', { ascending: false }),
+      ]);
+      if (quotesRes.data) setQuotes(quotesRes.data);
+      if (booksRes.data) setBooks(booksRes.data);
+    } else if (activeTab === 'quotes') {
       const { data } = await supabase.from('quotes').select('*').order('created_at', { ascending: false });
       if (data) setQuotes(data);
     } else if (activeTab === 'books') {
