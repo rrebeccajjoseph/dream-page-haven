@@ -62,6 +62,14 @@ const tabDescriptions: Partial<Record<Tab, string>> = {
   appreciation: 'quotes, books, articles, and other people\'s work that we love',
 };
 
+const getAuthorColor = (author: string | null) => {
+  if (!author) return undefined;
+  const lower = author.toLowerCase();
+  if (lower.includes('isha')) return 'hsl(var(--author-isha))';
+  if (lower.includes('rebecca')) return 'hsl(var(--author-rebecca))';
+  return undefined;
+};
+
 const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
