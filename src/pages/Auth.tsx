@@ -21,7 +21,7 @@ const Auth = () => {
         toast.success('Check your email to confirm your account');
       } else {
         await signIn(email, password);
-        navigate('/');
+        navigate('/home');
       }
     } catch (err: any) {
       toast.error(err.message);
