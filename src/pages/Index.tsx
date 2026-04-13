@@ -111,7 +111,7 @@ const Index = () => {
 
   const handleDelete = async (table: string, id: string) => {
     if (!confirm('are you sure?')) return;
-    const { error } = await supabase.from(table).delete().eq('id', id);
+    const { error } = await (supabase.from(table as any).delete() as any).eq('id', id);
     if (error) {
       toast.error(error.message);
     } else {
