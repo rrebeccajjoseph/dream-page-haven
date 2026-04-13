@@ -215,7 +215,7 @@ const Index = () => {
                           )}
                         </blockquote>
                         {q.author && (
-                          <p className="text-xs text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>
+                          <p className="text-xs" style={{ fontFamily: 'var(--font-body)', color: getAuthorColor(q.author) || 'hsl(var(--muted-foreground))' }}>
                             — {q.author}{q.source ? `, ${q.source}` : ''}
                           </p>
                         )}
@@ -254,7 +254,7 @@ const Index = () => {
                             b.title
                           )}
                         </CardTitle>
-                        <p className="text-xs text-muted-foreground italic" style={{ fontFamily: 'var(--font-body)' }}>
+                        <p className="text-xs italic" style={{ fontFamily: 'var(--font-body)', color: getAuthorColor(b.author) || 'hsl(var(--muted-foreground))' }}>
                           by {b.author}
                         </p>
                       </CardHeader>
@@ -298,7 +298,7 @@ const Index = () => {
                           )}
                         </CardTitle>
                         {a.author && (
-                          <p className="text-xs text-muted-foreground italic" style={{ fontFamily: 'var(--font-body)' }}>
+                          <p className="text-xs italic" style={{ fontFamily: 'var(--font-body)', color: getAuthorColor(a.author) || 'hsl(var(--muted-foreground))' }}>
                             by {a.author}
                           </p>
                         )}
@@ -341,7 +341,7 @@ const Index = () => {
                   <p className="text-[10px] text-muted-foreground mt-1.5" style={{ fontFamily: 'var(--font-body)' }}>
                     {format(new Date(p.created_at), 'MMMM d, yyyy')}
                   </p>
-                  <p className="text-[10px] text-muted-foreground italic mt-0.5" style={{ fontFamily: 'var(--font-body)' }}>
+                  <p className="text-[10px] italic mt-0.5" style={{ fontFamily: 'var(--font-body)', color: getAuthorColor(p.author) || 'hsl(var(--muted-foreground))' }}>
                     {p.author}
                   </p>
                 </CardHeader>
