@@ -41,6 +41,7 @@ const PostDetail = () => {
   const [commentName, setCommentName] = useState('');
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showCommentForm, setShowCommentForm] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -139,13 +140,13 @@ const PostDetail = () => {
 
         {/* Comments section */}
         <div className="mt-16 pt-8 border-t border-border/50">
-          <h2 className="text-xs tracking-widest uppercase text-muted-foreground/60 mb-6" style={{ fontFamily: 'var(--font-mono)' }}>
-            margin notes
+          <h2 className="text-xs tracking-widest uppercase text-muted-foreground/60 mb-4" style={{ fontFamily: 'var(--font-mono)' }}>
+            comments
           </h2>
 
-          {/* Comment list as speech bubbles */}
-          {comments.length > 0 && (
-            <div className="space-y-3 mb-8">
+          {/* Comment list */}
+          {comments.length > 0 ? (
+            <div className="space-y-3 mb-6">
               {comments.map((c) => (
                 <div key={c.id} className="flex flex-col items-start">
                   <div className="relative bg-muted/40 rounded-2xl rounded-bl-sm px-4 py-2.5 max-w-[80%]">
@@ -159,44 +160,66 @@ const PostDetail = () => {
                 </div>
               ))}
             </div>
+          ) : (
+            <p className="text-xs text-muted-foreground/40 italic mb-6" style={{ fontFamily: 'var(--font-body)' }}>
+              no comments yet
+            </p>
           )}
 
-          {/* Comment form */}
-          <div className="bg-muted/20 rounded-2xl p-4">
-            <form onSubmit={handleSubmitComment} className="space-y-2">
-              <input
-                placeholder="your name (or leave blank for anonymous)"
-                value={commentName}
-                onChange={(e) => setCommentName(e.target.value)}
-                className="bg-transparent outline-none text-xs py-1 w-full text-foreground placeholder:text-muted-foreground/40"
-                style={{ fontFamily: 'var(--font-mono)' }}
-              />
-              <div className="flex gap-2 items-end">
-                <textarea
-                  placeholder="leave a note…"
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  required
-                  rows={1}
-                  className="bg-transparent outline-none text-sm py-1 flex-1 text-foreground placeholder:text-muted-foreground/40 resize-none"
-                  style={{ fontFamily: 'var(--font-body)' }}
-                  onInput={(e) => {
-                    const el = e.target as HTMLTextAreaElement;
-                    el.style.height = 'auto';
-                    el.style.height = el.scrollHeight + 'px';
-                  }}
-                />
-                <button
-                  type="submit"
-                  disabled={submitting || !commentText.trim()}
-                  className="text-xs tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors pb-1 shrink-0"
+          {/* Add comment toggle */}
+          {!showCommentForm ? (
+            <button
+              onClick={() => setShowCommentForm(true)}
+              className="text-xs tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+              style={{ fontFamily: 'var(--font-mono)' }}
+            >
+              + add comment
+            </button>
+          ) : (
+            <div className="bg-muted/20 rounded-2xl p-4 animate-fade-in">
+              <form onSubmit={handleSubmitComment} className="space-y-2">
+                <input
+                  placeholder="your name (or leave blank for anonymous)"
+                  value={commentName}
+                  onChange={(e) => setCommentName(e.target.value)}
+                  className="bg-transparent outline-none text-xs py-1 w-full text-foreground placeholder:text-muted-foreground/40"
                   style={{ fontFamily: 'var(--font-mono)' }}
-                >
-                  {submitting ? '…' : '→'}
-                </button>
-              </div>
-            </form>
-          </div>
+                />
+                <div className="flex gap-2 items-end">
+                  <textarea
+                    placeholder="leave a note…"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    required
+                    rows={1}
+                    className="bg-transparent outline-none text-sm py-1 flex-1 text-foreground placeholder:text-muted-foreground/40 resize-none"
+                    style={{ fontFamily: 'var(--font-body)' }}
+                    onInput={(e) => {
+                      const el = e.target as HTMLTextAreaElement;
+                      el.style.height = 'auto';
+                      el.style.height = el.scrollHeight + 'px';
+                    }}
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    disabled={submitting || !commentText.trim()}
+                    className="text-xs tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors pb-1 shrink-0"
+                    style={{ fontFamily: 'var(--font-mono)' }}
+                  >
+                    {submitting ? '…' : '→'}
+                  </button>
+                </div>
+              </form>
+              <button
+                onClick={() => setShowCommentForm(false)}
+                className="text-[10px] text-muted-foreground/40 hover:text-muted-foreground mt-2 transition-colors"
+                style={{ fontFamily: 'var(--font-mono)' }}
+              >
+                cancel
+              </button>
+            </div>
+          )}
         </div>
       </main>
 
