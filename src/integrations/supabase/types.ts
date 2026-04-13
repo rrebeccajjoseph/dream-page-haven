@@ -14,11 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      articles: {
+        Row: {
+          author: string | null
+          created_at: string
+          description: string | null
+          id: string
+          link: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          author?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          link?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          author?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          link?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       books: {
         Row: {
           author: string
           created_at: string
           id: string
+          link: string | null
           notes: string | null
           rating: number | null
           title: string
@@ -28,6 +59,7 @@ export type Database = {
           author: string
           created_at?: string
           id?: string
+          link?: string | null
           notes?: string | null
           rating?: number | null
           title: string
@@ -37,6 +69,7 @@ export type Database = {
           author?: string
           created_at?: string
           id?: string
+          link?: string | null
           notes?: string | null
           rating?: number | null
           title?: string
@@ -113,6 +146,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          link: string | null
           source: string | null
           text: string
           user_id: string
@@ -122,6 +156,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          link?: string | null
           source?: string | null
           text: string
           user_id: string
@@ -131,6 +166,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          link?: string | null
           source?: string | null
           text?: string
           user_id?: string
