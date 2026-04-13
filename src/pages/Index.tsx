@@ -69,8 +69,11 @@ const tabDescriptions: Partial<Record<Tab, string>> = {
 const getAuthorColor = (author: string | null) => {
   if (!author) return undefined;
   const lower = author.toLowerCase();
-  if (lower.includes('isha')) return 'hsl(var(--author-isha))';
-  if (lower.includes('rebecca')) return 'hsl(var(--author-rebecca))';
+  const hasIsha = lower.includes('isha');
+  const hasRebecca = lower.includes('rebecca');
+  if (hasIsha && hasRebecca) return 'hsl(var(--author-both))';
+  if (hasIsha) return 'hsl(var(--author-isha))';
+  if (hasRebecca) return 'hsl(var(--author-rebecca))';
   return undefined;
 };
 
