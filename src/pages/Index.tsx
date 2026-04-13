@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 import { format } from 'date-fns';
 
 type Category = 'essay' | 'poetry' | 'misc';
@@ -53,7 +55,8 @@ const Index = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
-  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -113,19 +116,47 @@ const Index = () => {
         </div>
       </nav>
 
+      {/* Search */}
+      <div className="max-w-5xl mx-auto px-6 pt-6">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowSearch(!showSearch)}
+            className="text-muted-foreground hover:text-foreground transition-colors p-1"
+          >
+            <Search size={16} />
+          </button>
+          {showSearch && (
+            <Input
+              placeholder="search by title or author…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="max-w-xs text-sm border-border bg-transparent"
+              style={{ fontFamily: 'var(--font-mono)' }}
+              autoFocus
+            />
+          )}
+        </div>
+      </div>
+
       {/* Content */}
-      <main className="max-w-5xl mx-auto px-6 py-10">
+      <main className="max-w-5xl mx-auto px-6 py-6">
         {/* Grid Content */}
         {activeTab === 'quotes' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {quotes.map((q) => (
-              <Card key={q.id} className="bg-card border-border">
-                <CardContent className="pt-6">
-                  <blockquote className="text-lg italic leading-relaxed mb-3" style={{ fontFamily: 'var(--font-serif)' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {quotes
+              .filter((q) => {
+                if (!searchQuery) return true;
+                const s = searchQuery.toLowerCase();
+                return q.text.toLowerCase().includes(s) || (q.author?.toLowerCase().includes(s));
+              })
+              .map((q) => (
+              <Card key={q.id} className="bg-card border-border rounded-2xl">
+                <CardContent className="pt-5 pb-4 px-5">
+                  <blockquote className="text-sm italic leading-relaxed mb-2" style={{ fontFamily: 'var(--font-serif)' }}>
                     "{q.text}"
                   </blockquote>
                   {q.author && (
-                    <p className="text-sm text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>
+                    <p className="text-xs text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>
                       — {q.author}{q.source ? `, ${q.source}` : ''}
                     </p>
                   )}
@@ -134,48 +165,60 @@ const Index = () => {
             ))}
           </div>
         ) : activeTab === 'books' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {books.map((b) => (
-              <Card key={b.id} className="bg-card border-border">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xl font-normal" style={{ fontFamily: 'var(--font-serif)' }}>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {books
+              .filter((b) => {
+                if (!searchQuery) return true;
+                const s = searchQuery.toLowerCase();
+                return b.title.toLowerCase().includes(s) || b.author.toLowerCase().includes(s);
+              })
+              .map((b) => (
+              <Card key={b.id} className="bg-card border-border rounded-2xl">
+                <CardHeader className="pb-1 pt-4 px-4">
+                  <CardTitle className="text-base font-normal leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
                     {b.title}
                   </CardTitle>
-                  <p className="text-sm text-muted-foreground italic" style={{ fontFamily: 'var(--font-body)' }}>
+                  <p className="text-xs text-muted-foreground italic" style={{ fontFamily: 'var(--font-body)' }}>
                     by {b.author}
                   </p>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-4 pb-4">
                   {b.rating && (
-                    <p className="text-muted-foreground mb-2">
+                    <p className="text-muted-foreground mb-1 text-xs">
                       {Array.from({ length: b.rating }).map((_, i) => (
                         <span key={i}>✿</span>
                       ))}
                     </p>
                   )}
                   {b.notes && (
-                    <p className="text-sm leading-relaxed prose-vintage">{b.notes}</p>
+                    <p className="text-xs leading-relaxed prose-vintage line-clamp-3">{b.notes}</p>
                   )}
                 </CardContent>
               </Card>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((p) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {posts
+              .filter((p) => {
+                if (!searchQuery) return true;
+                const s = searchQuery.toLowerCase();
+                return p.title.toLowerCase().includes(s) || p.author.toLowerCase().includes(s);
+              })
+              .map((p) => (
               <Card
                 key={p.id}
-                className="bg-card border-border cursor-pointer hover:shadow-md transition-all rounded-2xl aspect-square flex flex-col justify-between"
+                className="bg-card border-border cursor-pointer hover:shadow-md transition-all rounded-2xl aspect-square flex flex-col"
                 onClick={() => navigate(`/post/${p.id}`)}
               >
-                <CardHeader className="pb-2 flex-1 flex flex-col justify-center items-center text-center">
-                  <CardTitle className="text-xl font-normal leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
+                <CardHeader className="pb-1 flex-1 flex flex-col justify-center items-center text-center px-4">
+                  <CardTitle className="text-base font-normal leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
                     {p.title}
                   </CardTitle>
-                  <p className="text-xs text-muted-foreground mt-2" style={{ fontFamily: 'var(--font-body)' }}>
+                  <p className="text-[10px] text-muted-foreground mt-1.5" style={{ fontFamily: 'var(--font-body)' }}>
                     {format(new Date(p.created_at), 'MMMM d, yyyy')}
                   </p>
-                  <p className="text-xs text-muted-foreground italic mt-1" style={{ fontFamily: 'var(--font-body)' }}>
+                  <p className="text-[10px] text-muted-foreground italic mt-0.5" style={{ fontFamily: 'var(--font-body)' }}>
                     {p.author}
                   </p>
                 </CardHeader>
