@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, ArrowUpRight } from 'lucide-react';
 import { format } from 'date-fns';
 
 type Category = 'essay' | 'poetry';
@@ -26,6 +26,7 @@ interface Quote {
   author: string | null;
   source: string | null;
   description: string | null;
+  link: string | null;
   created_at: string;
   user_id: string;
 }
@@ -36,6 +37,17 @@ interface Book {
   author: string;
   notes: string | null;
   rating: number | null;
+  link: string | null;
+  created_at: string;
+  user_id: string;
+}
+
+interface Article {
+  id: string;
+  title: string;
+  author: string | null;
+  link: string | null;
+  description: string | null;
   created_at: string;
   user_id: string;
 }
@@ -58,6 +70,7 @@ const Index = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
 
@@ -67,12 +80,14 @@ const Index = () => {
 
   const fetchData = async () => {
     if (activeTab === 'appreciation') {
-      const [quotesRes, booksRes] = await Promise.all([
+      const [quotesRes, booksRes, articlesRes] = await Promise.all([
         supabase.from('quotes').select('*').order('created_at', { ascending: false }),
         supabase.from('books').select('*').order('created_at', { ascending: false }),
+        supabase.from('articles').select('*').order('created_at', { ascending: false }),
       ]);
       if (quotesRes.data) setQuotes(quotesRes.data);
       if (booksRes.data) setBooks(booksRes.data);
+      if (articlesRes.data) setArticles(articlesRes.data as Article[]);
     } else {
       const { data } = await supabase.from('posts').select('*').eq('category', activeTab).order('created_at', { ascending: false });
       if (data) setPosts(data);
@@ -183,7 +198,13 @@ const Index = () => {
                     <Card key={q.id} className="bg-card border-border rounded-2xl">
                       <CardContent className="pt-5 pb-4 px-5">
                         <blockquote className="text-sm italic leading-relaxed mb-2" style={{ fontFamily: 'var(--font-serif)' }}>
-                          "{q.text}"
+                          {q.link ? (
+                            <a href={q.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 transition-colors inline-flex items-center gap-1">
+                              "{q.text}" <ArrowUpRight size={12} />
+                            </a>
+                          ) : (
+                            <>"{q.text}"</>
+                          )}
                         </blockquote>
                         {q.author && (
                           <p className="text-xs text-muted-foreground" style={{ fontFamily: 'var(--font-body)' }}>
@@ -217,7 +238,13 @@ const Index = () => {
                     <Card key={b.id} className="bg-card border-border rounded-2xl">
                       <CardHeader className="pb-1 pt-4 px-4">
                         <CardTitle className="text-base font-normal leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
-                          {b.title}
+                          {b.link ? (
+                            <a href={b.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 transition-colors inline-flex items-center gap-1">
+                              {b.title} <ArrowUpRight size={14} />
+                            </a>
+                          ) : (
+                            b.title
+                          )}
                         </CardTitle>
                         <p className="text-xs text-muted-foreground italic" style={{ fontFamily: 'var(--font-body)' }}>
                           by {b.author}
@@ -237,7 +264,48 @@ const Index = () => {
                 </div>
               </div>
             )}
-            {quotes.length === 0 && books.length === 0 && (
+            {/* Articles section */}
+            {articles.filter((a) => {
+              if (!searchQuery) return true;
+              const s = searchQuery.toLowerCase();
+              return a.title.toLowerCase().includes(s) || (a.author?.toLowerCase().includes(s));
+            }).length > 0 && (
+              <div>
+                <h2 className="text-sm tracking-wider text-muted-foreground mb-3" style={{ fontFamily: 'var(--font-mono)' }}>essays</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {articles.filter((a) => {
+                    if (!searchQuery) return true;
+                    const s = searchQuery.toLowerCase();
+                    return a.title.toLowerCase().includes(s) || (a.author?.toLowerCase().includes(s));
+                  }).map((a) => (
+                    <Card key={a.id} className="bg-card border-border rounded-2xl">
+                      <CardHeader className="pb-1 pt-4 px-4">
+                        <CardTitle className="text-base font-normal leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
+                          {a.link ? (
+                            <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 transition-colors inline-flex items-center gap-1">
+                              {a.title} <ArrowUpRight size={14} />
+                            </a>
+                          ) : (
+                            a.title
+                          )}
+                        </CardTitle>
+                        {a.author && (
+                          <p className="text-xs text-muted-foreground italic" style={{ fontFamily: 'var(--font-body)' }}>
+                            by {a.author}
+                          </p>
+                        )}
+                      </CardHeader>
+                      {a.description && (
+                        <CardContent className="px-4 pb-4">
+                          <p className="text-xs leading-relaxed text-muted-foreground">{a.description}</p>
+                        </CardContent>
+                      )}
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+            {quotes.length === 0 && books.length === 0 && articles.length === 0 && (
               <div className="text-center py-20">
                 <p className="text-muted-foreground italic text-lg" style={{ fontFamily: 'var(--font-serif)' }}>nothing here yet…</p>
                 <div className="ornament" />
