@@ -25,14 +25,13 @@ const useTypewriter = (text: string, speed = 50, start = false) => {
 
 const Splash = () => {
   const navigate = useNavigate();
-  const [phase, setPhase] = useState<'idle' | 'question' | 'answer'>('idle');
+  const [phase, setPhase] = useState<'question' | 'answer'>('question');
 
   const question = useTypewriter('why did the chicken cross the road?', 45, phase === 'question');
   const answer = useTypewriter("to get to rebecca and isha's margin notes", 45, phase === 'answer');
 
   const handleTap = () => {
-    if (phase === 'idle') setPhase('question');
-    else if (phase === 'question' && question.done) setPhase('answer');
+    if (phase === 'question' && question.done) setPhase('answer');
     else if (phase === 'answer' && answer.done) navigate('/home');
   };
 
@@ -43,11 +42,6 @@ const Splash = () => {
     >
       {/* Text above the drawing */}
       <div className="mb-6 text-center min-h-[4rem]">
-        {phase === 'idle' && (
-          <p className="text-muted-foreground text-xs italic animate-pulse" style={{ fontFamily: 'var(--font-body)' }}>
-            tap
-          </p>
-        )}
 
         {phase === 'question' && (
           <>
