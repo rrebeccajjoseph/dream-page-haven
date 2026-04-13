@@ -77,6 +77,51 @@ const getAuthorColor = (author: string | null) => {
   return undefined;
 };
 
+const ITEMS_PER_PAGE = 4;
+
+const WatercolorFlowers = () => (
+  <>
+    {/* Top-left cluster */}
+    <div className="fixed top-16 left-4 opacity-20 pointer-events-none select-none text-3xl" style={{ filter: 'blur(0.5px)' }}>
+      🌸
+    </div>
+    <div className="fixed top-28 left-8 opacity-15 pointer-events-none select-none text-2xl" style={{ filter: 'blur(0.3px)' }}>
+      🌷
+    </div>
+    <div className="fixed top-10 left-20 opacity-10 pointer-events-none select-none text-xl" style={{ filter: 'blur(0.7px)' }}>
+      🌺
+    </div>
+    {/* Top-right cluster */}
+    <div className="fixed top-20 right-6 opacity-15 pointer-events-none select-none text-2xl" style={{ filter: 'blur(0.5px)' }}>
+      🌸
+    </div>
+    <div className="fixed top-8 right-24 opacity-10 pointer-events-none select-none text-xl" style={{ filter: 'blur(0.6px)' }}>
+      🌼
+    </div>
+    {/* Bottom-left */}
+    <div className="fixed bottom-20 left-6 opacity-15 pointer-events-none select-none text-2xl" style={{ filter: 'blur(0.4px)' }}>
+      🌷
+    </div>
+    <div className="fixed bottom-8 left-16 opacity-10 pointer-events-none select-none text-xl" style={{ filter: 'blur(0.7px)' }}>
+      🌸
+    </div>
+    {/* Bottom-right */}
+    <div className="fixed bottom-16 right-8 opacity-15 pointer-events-none select-none text-2xl" style={{ filter: 'blur(0.5px)' }}>
+      🌺
+    </div>
+    <div className="fixed bottom-32 right-20 opacity-10 pointer-events-none select-none text-xl" style={{ filter: 'blur(0.6px)' }}>
+      🌸
+    </div>
+    {/* Mid sides */}
+    <div className="fixed top-1/2 left-2 opacity-10 pointer-events-none select-none text-xl" style={{ filter: 'blur(0.5px)' }}>
+      🌼
+    </div>
+    <div className="fixed top-1/2 right-3 opacity-10 pointer-events-none select-none text-xl" style={{ filter: 'blur(0.5px)' }}>
+      🌷
+    </div>
+  </>
+);
+
 const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -89,6 +134,7 @@ const Index = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     fetchData();
