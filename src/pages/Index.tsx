@@ -155,10 +155,11 @@ const Index = () => {
         <div className="max-w-5xl mx-auto flex justify-between items-center">
           <div>
             <div className="flex items-center gap-3">
+              <img src={chickenImg} alt="chicken" className="w-14 h-14 hover:animate-wiggle" width={512} height={512} />
               <h1 className="text-4xl font-light tracking-wider md:text-3xl" style={{ fontFamily: 'var(--font-mono)' }}>
                 rebecca and isha's margin notes
               </h1>
-              <img src={chickenImg} alt="chicken" className="w-10 h-10" width={512} height={512} />
+            </div>
             </div>
             <p className="text-muted-foreground italic mt-1 text-sm" style={{ fontFamily: 'var(--font-body)' }}>
               essays · poetry · appreciation
