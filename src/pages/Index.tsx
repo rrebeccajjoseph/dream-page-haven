@@ -25,6 +25,7 @@ interface Quote {
   text: string;
   author: string | null;
   source: string | null;
+  description: string | null;
   created_at: string;
   user_id: string;
 }
@@ -46,6 +47,7 @@ const tabLabels: Record<Tab, string> = {
 };
 
 const tabDescriptions: Partial<Record<Tab, string>> = {
+  essay: 'long-form thoughts, reflections, and musings',
   appreciation: 'quotes, books, articles, and other people\'s work that we love',
 };
 
@@ -189,6 +191,11 @@ const Index = () => {
                             — {q.author}{q.source ? `, ${q.source}` : ''}
                           </p>
                         )}
+                        {q.description && (
+                          <p className="text-xs text-muted-foreground mt-2 leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
+                            {q.description}
+                          </p>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
@@ -224,9 +231,6 @@ const Index = () => {
                               <span key={i}>✿</span>
                             ))}
                           </p>
-                        )}
-                        {b.notes && (
-                          <p className="text-xs leading-relaxed prose-vintage line-clamp-3">{b.notes}</p>
                         )}
                       </CardContent>
                     </Card>
