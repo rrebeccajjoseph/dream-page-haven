@@ -2,11 +2,98 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
-import { Bold, Italic, Heading1, Heading2, Link as LinkIcon, List, Quote, ImagePlus } from 'lucide-react';
+import { Bold, Italic, Heading1, Heading2, Link as LinkIcon, List, Quote, ImagePlus, Indent, Outdent } from 'lucide-react';
 import { useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { Extension } from '@tiptap/core';
+
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    indent: {
+      increaseIndent: () => ReturnType;
+      decreaseIndent: () => ReturnType;
+    };
+  }
+}
+
+const IndentExtension = Extension.create({
+  name: 'indent',
+
+  addGlobalAttributes() {
+    return [
+      {
+        types: ['paragraph', 'heading', 'blockquote', 'bulletList', 'orderedList'],
+        attributes: {
+          indent: {
+            default: 0,
+            parseHTML: (element: HTMLElement) => {
+              const ml = element.style.marginLeft;
+              if (ml) {
+                const val = parseInt(ml, 10);
+                return isNaN(val) ? 0 : Math.round(val / 24);
+              }
+              return 0;
+            },
+            renderHTML: (attributes: Record<string, any>) => {
+              if (!attributes.indent || attributes.indent <= 0) return {};
+              return { style: `margin-left: ${attributes.indent * 24}px` };
+            },
+          },
+        },
+      },
+    ];
+  },
+
+  addCommands() {
+    return {
+      increaseIndent:
+        () =>
+        ({ tr, state, dispatch }) => {
+          const { from, to } = state.selection;
+          state.doc.nodesBetween(from, to, (node, pos) => {
+            if (node.isBlock && node.type.name !== 'doc') {
+              const currentIndent = (node.attrs.indent as number) || 0;
+              if (currentIndent < 8) {
+                tr.setNodeMarkup(pos, undefined, {
+                  ...node.attrs,
+                  indent: currentIndent + 1,
+                });
+              }
+            }
+          });
+          if (dispatch) dispatch(tr);
+          return true;
+        },
+      decreaseIndent:
+        () =>
+        ({ tr, state, dispatch }) => {
+          const { from, to } = state.selection;
+          state.doc.nodesBetween(from, to, (node, pos) => {
+            if (node.isBlock && node.type.name !== 'doc') {
+              const currentIndent = (node.attrs.indent as number) || 0;
+              if (currentIndent > 0) {
+                tr.setNodeMarkup(pos, undefined, {
+                  ...node.attrs,
+                  indent: currentIndent - 1,
+                });
+              }
+            }
+          });
+          if (dispatch) dispatch(tr);
+          return true;
+        },
+    };
+  },
+
+  addKeyboardShortcuts() {
+    return {
+      Tab: () => this.editor.commands.increaseIndent(),
+      'Shift-Tab': () => this.editor.commands.decreaseIndent(),
+    };
+  },
+});
 
 interface RichTextEditorProps {
   content: string;
@@ -41,6 +128,7 @@ const RichTextEditor = ({ content, onChange, placeholder }: RichTextEditorProps)
       Image.configure({
         HTMLAttributes: { class: 'rounded-lg max-w-full h-auto my-4' },
       }),
+      IndentExtension,
     ],
     content,
     onUpdate: ({ editor }) => {
@@ -48,7 +136,7 @@ const RichTextEditor = ({ content, onChange, placeholder }: RichTextEditorProps)
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none min-h-[200px] px-3 py-2 focus:outline-none',
+        class: 'prose prose-sm max-w-none min-h-[200px] px-3 py-2 focus:outline-none [&_p]:mb-3',
         style: "fontFamily: 'var(--font-body)'",
       },
     },
@@ -138,6 +226,19 @@ const RichTextEditor = ({ content, onChange, placeholder }: RichTextEditorProps)
           title="Quote"
         >
           <Quote size={14} />
+        </MenuButton>
+        <div className="w-px h-4 bg-border mx-1" />
+        <MenuButton
+          onClick={() => editor.commands.increaseIndent()}
+          title="Indent"
+        >
+          <Indent size={14} />
+        </MenuButton>
+        <MenuButton
+          onClick={() => editor.commands.decreaseIndent()}
+          title="Outdent"
+        >
+          <Outdent size={14} />
         </MenuButton>
         <div className="w-px h-4 bg-border mx-1" />
         <MenuButton
