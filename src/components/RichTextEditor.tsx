@@ -2,13 +2,13 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
-import TextStyle from '@tiptap/extension-text-style';
+
 import { Bold, Italic, Heading1, Heading2, Link as LinkIcon, List, Quote, ImagePlus, Indent, Outdent } from 'lucide-react';
 import { useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Extension } from '@tiptap/core';
+import { Extension, RawCommands } from '@tiptap/core';
 
 // Custom extension for indent/outdent via margin-left on block nodes
 const IndentExtension = Extension.create({
@@ -41,7 +41,7 @@ const IndentExtension = Extension.create({
 
   addCommands() {
     return {
-      increaseIndent:
+      increaseIndent: () => ({ tr, state, dispatch }: any) => {
         () =>
         ({ tr, state, dispatch }) => {
           const { from, to } = state.selection;
